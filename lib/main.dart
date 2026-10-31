@@ -210,3 +210,109 @@ class _SurahPageState extends State<SurahPage> {
               color: selected
                   ? Theme.of(context).colorScheme.primaryContainer
                   : null,
+                              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 16,
+                          child: Text('${a.number}',
+                              style: const TextStyle(fontSize: 13)),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          tooltip: 'Is ayah se sunein',
+                          icon: const Icon(Icons.play_circle_fill, size: 32),
+                          onPressed: () => playFrom(i),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      a.arabic,
+                      textAlign: TextAlign.right,
+                      textDirection: TextDirection.rtl,
+                      style: TextStyle(fontSize: arabicSize, height: 1.9),
+                    ),
+                    const Divider(height: 24),
+                    Text(
+                      a.urdu,
+                      textAlign: TextAlign.right,
+                      textDirection: TextDirection.rtl,
+                      style: const TextStyle(fontSize: 18, height: 1.8),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildPlayerBar() {
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        ),
+        child: StreamBuilder<PlayerState>(
+          stream: player.playerStateStream,
+          builder: (context, snap) {
+            final state = snap.data;
+            final playing = state?.playing ?? false;
+            final buffering =
+                state?.processingState == ProcessingState.loading ||
+                    state?.processingState == ProcessingState.buffering;
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  iconSize: 34,
+                  icon: const Icon(Icons.skip_previous),
+                  onPressed: () => player.seekToPrevious(),
+                ),
+                buffering
+                    ? const Padding(
+                        padding: EdgeInsets.all(12),
+                        child: SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: CircularProgressIndicator(strokeWidth: 3),
+                        ),
+                      )
+                    : IconButton(
+                        iconSize: 48,
+                        icon: Icon(playing
+                            ? Icons.pause_circle_filled
+                            : Icons.play_circle_filled),
+                        onPressed: () async {
+                          if (state?.processingState ==
+                              ProcessingState.completed) {
+                            await player.seek(Duration.zero, index: 0);
+                            player.play();
+                          } else if (playing) {
+                            player.pause();
+                          } else {
+                            player.play();
+                          }
+                        },
+                      ),
+                IconButton(
+                  iconSize: 34,
+                  icon: const Icon(Icons.skip_next),
+                  onPressed: () => player.seekToNext(),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
