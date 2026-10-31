@@ -1,1 +1,21 @@
+name: learn_surah_yaseen
+description: Learn Surah Yaseen with Arabic text, Urdu translation and audio.
+publish_to: 'none'
+version: 1.0.0+1
 
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.0
+  just_audio: ^0.9.40
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
